@@ -1,0 +1,109 @@
+{"name":"bwa-mem",
+ "available": true,
+ "parallelism":"parallel",
+ "version":"0.7.10",
+ "helpURI":"http://bio-bwa.sourceforge.net/",
+ "label":"bwa mem",
+ "shortDescription":"bwa 0.7.10 is a next gen sequence aligner",
+ "longDescription":"",
+ "author":"Eric T Dawson",
+ "tags":["next-gen","aligner"],
+ "ontology":["http://sswapmeet.sswap.info/agave/apps/Application"],
+ "executionSystem":"stampede-06212014-1555-ericd92",
+ "deploymentSystem":"data.iplantcollaborative.org",
+ "executionType":"HPC",
+ "deploymentPath":"/ericco92/applications/bwa-mem-0.7.10",
+ "templatePath":"mem.sh",
+ "testPath":"mem.sh",
+ "checkpointable":false,
+ "defaultQueue":"development",
+ "defaultNodeCount":1,
+ "defaultProcessorsPerNode": 4,
+ "modules":["purge", "load TACC", "load launcher"],
+ "inputs":[
+    {"id":"query1",
+     "value":
+        {"default":"",
+         "required":true,
+         "visible":true},
+     "details":
+        {"label":"Query BAM",
+         "description":""},
+     "semantics":
+        {"ontology":["http://sswapmeet.sswap.info/mime/application/X-bam"],
+         "minCardinality":1,
+         "maxCardinality":1,
+         "fileTypes":["bam-0.1.2"]}},
+    {"id":"databaseFasta",
+     "value":
+        {"default":"/work/02057/ericd92/sandbox/e_coli_index.tgz",
+         "validator":"tar.gz$|tar.bz2$|tgz$",
+         "required":true,
+         "visible":true},
+     "details":
+        {"label":"Genome database tarball",
+         "description":"Zipped, flat archive containing Fasta and associated fasta index file"},
+     "semantics":
+        {"ontology":["http://sswapmeet.sswap.info/mime/application/X-tar"],
+         "minCardinality":1,
+         "maxCardinality":1,
+         "fileTypes":["zip-0"]}}],
+ "parameters":[
+    {"id":"numThreads",
+     "value":
+        {"default": 4,
+         "order": 0,
+         "required":false,
+         "visible":true,
+         "type":"number"},
+     "details":
+        {"label":"Number of Platypus threads to spawn per process [4]",
+         "argument":"--nCPU ",
+         "showArgument":true },
+     "semantics":
+        {"ontology":["xs:integer"]}
+    },
+    {"id":"output",
+      "value":
+        {"default": "AllVariants.vcf",
+          "order": 1,
+          "required":false,
+          "visible":true,
+          "type":"number"},
+        "details":
+          {"label":"Output file name: ",
+          "argument":"--output ",
+          "showArgument":true },
+          "semantics":
+          {"ontology":["xs:string"]}
+    },
+    {"id":"assemble",
+      "value":
+        {"default": false,
+        "order": 2,
+        "required":false,
+        "visible":true,
+        "type":"flag"},
+      "details":
+        {"label":"The indexed fasta",
+        "argument":"--assemble ",
+        "showArgument":true },
+        "semantics":
+        {"ontology":["xs:string"]}
+    }
+
+
+
+        ],
+ "outputs":[
+    {"id":"outputSAM",
+     "value":
+        {"default":"bwa_output.bam",
+         "validator":".vcf$"},
+     "details":
+        {"label":"BAM file",
+         "description":"Sequence alignment file"},
+     "semantics":
+        {"ontology":["http://sswapmeet.sswap.info/mime/text/X-fasta"],
+         "fileType":"SAM-0.1.2"}}
+        ]}
