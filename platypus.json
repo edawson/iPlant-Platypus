@@ -42,7 +42,7 @@
          "visible":true},
      "details":
         {"label":"Genome database tarball",
-         "description":"Zipped, flat archive containing Fasta and associated fasta index file"},
+         "description":"Zipped, flat archive containing Fasta and .fai file"},
      "semantics":
         {"ontology":["http://sswapmeet.sswap.info/mime/application/X-tar"],
          "minCardinality":1,
@@ -85,14 +85,96 @@
         "visible":true,
         "type":"flag"},
       "details":
-        {"label":"The indexed fasta",
+        {"label":"Use the assembler to generate candidate haplotypes.",
         "argument":"--assemble ",
         "showArgument":true },
         "semantics":
+        {"ontology":["xs:boolean"]}
+    },
+    {"id":"source",
+      "value":
+        {"default": "",
+        "order": 3,
+        "required":false,
+        "visible":true,
+        "type":"string"},
+      "details":
+        {"label":"Existing VCF(s) to use for genotyping",
+        "argument":"--source ",
+        "showArgument":false },
+        "semantics":
         {"ontology":["xs:string"]}
+    },
+    {"id":"logfileName",
+      "value":
+        {"default": "log.txt",
+        "order": 4,
+        "required":false,
+        "visible":true,
+        "type":"string"},
+      "details":
+        {"label":"Name of log file: ",
+        "argument":"--logFileName ",
+        "showArgument":true },
+        "semantics":
+        {"ontology":["xs:string"]}
+    },
+    {"id":"minReads",
+      "value":
+        {"default": 2,
+        "order": 5,
+        "required":false,
+        "visible":true,
+        "type":"number"},
+      "details":
+        {"label":"Minimum number of reads required to support a variant: ",
+        "argument":"--minReads ",
+        "showArgument":true },
+        "semantics":
+        {"ontology":["xs:integer"]}
+    },
+    {"id":"maxReads",
+      "value":
+        {"default": 5000000,
+        "order": 6,
+        "required":false,
+        "visible":true,
+        "type":"number"},
+      "details":
+        {"label":"Maximum number of allowed reads in genomic buffer: ",
+        "argument":"--maxReads ",
+        "showArgument":true },
+        "semantics":
+        {"ontology":["xs:integer"]}
+    },
+    {"id":"maxVariants",
+      "value":
+        {"default": 8,
+        "order": 7,
+        "required":false,
+        "visible":true,
+        "type":"number"},
+      "details":
+        {"label":"Maximum number of variants allowed per 100bp region: ",
+        "argument":"--maxVariants ",
+        "showArgument":true },
+        "semantics":
+        {"ontology":["xs:integer"]}
+    },
+    {"id":"verbosity",
+      "value":
+        {"default": 2,
+        "order": 8,
+        "required":false,
+        "visible":true,
+        "type":"number"},
+      "details":
+        {"label":"Verbosity level",
+        "argument":"--verbosity ",
+        "showArgument":true },
+        "semantics":
+        {"ontology":["xs:integer"]}
     }
-
-
 
         ],
  "outputs":[
