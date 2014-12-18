@@ -12,6 +12,12 @@
 #SBATCH -t 2:00:00
 #SBATCH -A iPlant-Collabs
 
+## Do some SBATCH-specific module loads and variable definitions here
+module purge
+module load TACC
+module load launcher
+refFile="/work/02057/ericd92/sandbox/e_coli_idx.fa"
+bamFile="/work/02057/ericd92/sandbox/ecoli_sorted.bam"
 
 ## Set up the bin directory
 tar xzf bin.tgz
@@ -22,7 +28,7 @@ PATH=$PATH:`pwd`/bin
 
 ## Inputs: queryBAM,
 ##         fasta file OR flat tgz/tar.gz file with fa and fai
-QBAM=$bamFiles
+QBAM=$bamFile
 QBAMIND=$bamInd
 output="--output "
 nCPU="--nCPU 4"
@@ -48,21 +54,34 @@ rm -rf paramlist.txt
 ## Run Platypus on the input files
 if [[ "$WHOLEGENOME" == 0]];
     ##Run platypus on the specified region
-    then python Platypus.py callVariants ${output} ${REFERENCE_F} ${QBAM} ${REGIONS} ${assemble} ${SOURCE} ${nCPU} ${logFileName} ${bufferSize} ${minReads} ${maxReads} ${maxVariants} ${verbosity} ${minPosterior} ${maxSize} ${minFlank}
+    nCPU=8
+    ARGS="${output} ${REFERENCE_F} "
+    ARGS+="${QBAM} ${REGIONS} ${assemble} ${SOURCE} ${nCPU} ${logFileName} "
+    ARGS+="${bufferSize} ${minReads} ${maxReads} ${maxVariants} ${verbosity} "
+    ARGS+="${minPosterior} ${maxSize} ${minFlank}"
+    then python Platypus.py callVariants ${ARGS}
 else
     ## get BAM header line and find genomic length
-    seqID=`samtools view -H ${QBAM} | grep -o SQ:[A-Za-z0-9]`
+    seqID=`samtools view -H ${QBAM} | grep -o "SN:[A-Za-z0-9]" | grep -o "[A-Za-z0-9\.\-]" | grep -v "SN"`
     genomeLen=`samtools view -H ${QBAM} | grep -o "LN:[0-9]*" | grep -o "[0-9]*"`
     ## Divide the genome up into portions that give each core 1,000,000bp
-    numWorkers=((${genomeLen}/${IPLANT_CORES_REQUESTED}))
-    remainder=((${genomeLen}%${IPLANT_CORES_REQUESTED}))
+    numWorkers=((${genomeLen}/1000000))
+    remainder=((${genomeLen}%1000000))
     for i in `seq 1 numWorkers`
     do
         REGIONS=$seqID:$((`expr $i - 1` * $numWorkers))-$(($i * $numWorkers))
-        echo "python Platypus.py callVariants ${output} ${REFERENCE_F} ${QBAM} ${REGIONS} ${assemble} ${SOURCE} ${nCPU} ${logFileName} ${bufferSize} ${minReads} ${maxReads} ${maxVariants} ${verbosity} ${minPosterior} ${maxSize} ${minFlank}" >> paramlist.txt
+        ARGS="${output} ${REFERENCE_F} "
+        ARGS+="${QBAM} ${REGIONS} ${assemble} ${SOURCE} ${nCPU} ${logFileName} "
+        ARGS+="${bufferSize} ${minReads} ${maxReads} ${maxVariants} ${verbosity} "
+        ARGS+="${minPosterior} ${maxSize} ${minFlank}"
+        echo "python Platypus.py callVariants  ${ARGS}" >> paramlist.txt
     done
     REGIONS=$seqID:$(($i * $numWorkers))-$(($i * $numWorkers + $remainder))
-    echo "python Platypus.py callVariants " >> paramlist.txt
+    ARGS="${output} ${REFERENCE_F} "
+    ARGS+="${QBAM} ${REGIONS} ${assemble} ${SOURCE} ${nCPU} ${logFileName} "
+    ARGS+="${bufferSize} ${minReads} ${maxReads} ${maxVariants} ${verbosity} "
+    ARGS+="${minPosterior} ${maxSize} ${minFlank}"
+    echo "python Platypus.py callVariants ${ARGS}" >> paramlist.txt
 
     echo "Launcher...."
     date
