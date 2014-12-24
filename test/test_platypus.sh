@@ -35,7 +35,7 @@ nCPU="--nCPU 4"
 CPUS=4
 extractRef.sh ${refFile}
 REFERENCE_F=$(basename $(find ${TARGET}/ -name "*.${EXTENSION}" -print0))
-REFERENCE_F="${TARGET}/$REFERENCE_F"
+REFERENCE_F="--refFile ${TARGET}/$REFERENCE_F"
 
 WHOLEGENOME=0
 if [ -z `echo ${regions} | sed "s/ //g"` ]
