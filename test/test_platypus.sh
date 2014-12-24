@@ -16,8 +16,8 @@
 module purge
 module load TACC
 module load launcher
-refFile="/work/02057/ericd92/sandbox/e_coli_idx.fa"
-bamFile="/work/02057/ericd92/sandbox/ecoli_sorted.bam"
+refFile="e_coli_idx.fa"
+bamFile="ecoli_sorted.bam"
 
 ## Set up the bin directory
 tar xzf bin.tgz
