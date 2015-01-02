@@ -16,8 +16,8 @@
 module purge
 module load TACC
 module load launcher
-refFile="/work/02057/ericd92/sandbox/e_coli_idx.fa"
-bamFile="/work/02057/ericd92/sandbox/ecoli_sorted.bam"
+refFile="e_coli_idx.fa"
+bamFile="ecoli_sorted.bam"
 
 ## Set up the bin directory
 tar xzf bin.tgz
@@ -35,7 +35,7 @@ nCPU="--nCPU 4"
 CPUS=4
 extractRef.sh ${refFile}
 REFERENCE_F=$(basename $(find ${TARGET}/ -name "*.${EXTENSION}" -print0))
-REFERENCE_F="${TARGET}/$REFERENCE_F"
+REFERENCE_F="--refFile ${TARGET}/$REFERENCE_F"
 
 WHOLEGENOME=0
 if [ -z `echo ${regions} | sed "s/ //g"` ]
