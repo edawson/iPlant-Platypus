@@ -30,7 +30,12 @@ PATH=$PATH:`pwd`/bin
 ##         fasta file OR flat tgz/tar.gz file with fa and fai
 QBAM=$bamFile
 QBAMIND=$bamInd
-output="--output "
+if [ -n "${output}" ]
+then
+  output="--output ${output}"
+else
+  output=""
+fi
 nCPU="--nCPU 4"
 CPUS=4
 extractRef.sh ${refFile}
@@ -70,14 +75,14 @@ else
     for i in `seq 1 numWorkers`
     do
         REGIONS=$seqID:$((`expr $i - 1` * $numWorkers))-$(($i * $numWorkers))
-        ARGS="${output} ${REFERENCE_F} "
+        ARGS="--output temp${i}.vcf ${REFERENCE_F} "
         ARGS+="${QBAM} ${REGIONS} ${assemble} ${SOURCE} ${nCPU} ${logFileName} "
         ARGS+="${bufferSize} ${minReads} ${maxReads} ${maxVariants} ${verbosity} "
         ARGS+="${minPosterior} ${maxSize} ${minFlank}"
         echo "python Platypus.py callVariants  ${ARGS}" >> paramlist.txt
     done
     REGIONS=$seqID:$(($i * $numWorkers))-$(($i * $numWorkers + $remainder))
-    ARGS="${output} ${REFERENCE_F} "
+    ARGS="$--output temp${i}.vcf ${REFERENCE_F} "
     ARGS+="${QBAM} ${REGIONS} ${assemble} ${SOURCE} ${nCPU} ${logFileName} "
     ARGS+="${bufferSize} ${minReads} ${maxReads} ${maxVariants} ${verbosity} "
     ARGS+="${minPosterior} ${maxSize} ${minFlank}"
